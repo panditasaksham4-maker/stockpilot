@@ -1,0 +1,468 @@
+{
+  "roles": [
+    {
+      "id": "super_admin",
+      "name": "Super Administrator",
+      "description": "Full system access, inventory management, user management, and audit logs"
+    },
+    {
+      "id": "inventory_manager",
+      "name": "Inventory Manager",
+      "description": "Manages products, updates stock, view and search inventory"
+    },
+    {
+      "id": "viewer",
+      "name": "Viewer",
+      "description": "Read-only access to view and search inventory"
+    },
+    {
+      "id": "custom",
+      "name": "Custom User",
+      "description": "User with individually assigned granular permissions"
+    }
+  ],
+  "permissions": [
+    {
+      "id": "inventory.view",
+      "name": "View Inventory",
+      "category": "inventory",
+      "description": "View products list and stock levels"
+    },
+    {
+      "id": "inventory.search",
+      "name": "Search Products",
+      "category": "inventory",
+      "description": "Search products using Linear and Binary algorithms"
+    },
+    {
+      "id": "inventory.create",
+      "name": "Add Product",
+      "category": "inventory",
+      "description": "Create new product records in the inventory"
+    },
+    {
+      "id": "inventory.update",
+      "name": "Update Product",
+      "category": "inventory",
+      "description": "Modify existing product information and details"
+    },
+    {
+      "id": "inventory.delete",
+      "name": "Delete Product",
+      "category": "inventory",
+      "description": "Permanently remove products from the inventory"
+    },
+    {
+      "id": "inventory.adjust_stock",
+      "name": "Adjust Stock",
+      "category": "inventory",
+      "description": "Perform stock count adjustments and quantity increments"
+    },
+    {
+      "id": "users.view",
+      "name": "View Users",
+      "category": "users",
+      "description": "View user accounts, roles, and status"
+    },
+    {
+      "id": "users.create",
+      "name": "Create Users",
+      "category": "users",
+      "description": "Create new system users and assign roles"
+    },
+    {
+      "id": "users.update",
+      "name": "Update Users",
+      "category": "users",
+      "description": "Edit user account details and roles"
+    },
+    {
+      "id": "users.deactivate",
+      "name": "Deactivate Users",
+      "category": "users",
+      "description": "Activate or deactivate user accounts"
+    },
+    {
+      "id": "permissions.manage",
+      "name": "Manage Permissions",
+      "category": "permissions",
+      "description": "Grant or revoke fine-grained permissions per user"
+    },
+    {
+      "id": "audit.view",
+      "name": "View Audit Logs",
+      "category": "audit",
+      "description": "View system security and activity audit history"
+    },
+    {
+      "id": "settings.manage",
+      "name": "Manage Settings",
+      "category": "settings",
+      "description": "Configure system settings such as low-stock thresholds"
+    }
+  ],
+  "role_permissions": [
+    {
+      "role_id": "super_admin",
+      "permission_id": "inventory.view"
+    },
+    {
+      "role_id": "super_admin",
+      "permission_id": "inventory.search"
+    },
+    {
+      "role_id": "super_admin",
+      "permission_id": "inventory.create"
+    },
+    {
+      "role_id": "super_admin",
+      "permission_id": "inventory.update"
+    },
+    {
+      "role_id": "super_admin",
+      "permission_id": "inventory.delete"
+    },
+    {
+      "role_id": "super_admin",
+      "permission_id": "inventory.adjust_stock"
+    },
+    {
+      "role_id": "super_admin",
+      "permission_id": "users.view"
+    },
+    {
+      "role_id": "super_admin",
+      "permission_id": "users.create"
+    },
+    {
+      "role_id": "super_admin",
+      "permission_id": "users.update"
+    },
+    {
+      "role_id": "super_admin",
+      "permission_id": "users.deactivate"
+    },
+    {
+      "role_id": "super_admin",
+      "permission_id": "permissions.manage"
+    },
+    {
+      "role_id": "super_admin",
+      "permission_id": "audit.view"
+    },
+    {
+      "role_id": "super_admin",
+      "permission_id": "settings.manage"
+    },
+    {
+      "role_id": "inventory_manager",
+      "permission_id": "inventory.view"
+    },
+    {
+      "role_id": "inventory_manager",
+      "permission_id": "inventory.search"
+    },
+    {
+      "role_id": "inventory_manager",
+      "permission_id": "inventory.create"
+    },
+    {
+      "role_id": "inventory_manager",
+      "permission_id": "inventory.update"
+    },
+    {
+      "role_id": "inventory_manager",
+      "permission_id": "inventory.adjust_stock"
+    },
+    {
+      "role_id": "viewer",
+      "permission_id": "inventory.view"
+    },
+    {
+      "role_id": "viewer",
+      "permission_id": "inventory.search"
+    }
+  ],
+  "users": [
+    {
+      "id": 5,
+      "username": "saksham",
+      "full_name": "Saksham",
+      "email": "saksham@stockpilot.local",
+      "password_hash": "$2b$10$67iA7koo/ZtiI8eAFJKbOOvCL4Z5qRdv7Mzu6ATcroIq6WxXfL00.",
+      "role_id": "super_admin",
+      "is_active": 1,
+      "created_at": "2026-10-25T09:58:23.850Z",
+      "updated_at": "2026-10-25T10:53:13.655Z",
+      "last_login_at": "2026-10-25T11:30:38.701Z"
+    },
+    {
+      "id": 7,
+      "username": "Palakthakur",
+      "full_name": "Palak",
+      "email": "palak.thakur@gmail.com",
+      "password_hash": "$2b$10$983yumOzlI8p5EGal3KfCu3AMylbPrKSlS.gxC/DUDyivfb75YKka",
+      "role_id": "inventory_manager",
+      "is_active": 0,
+      "created_at": "2026-10-25T10:24:28.633Z",
+      "updated_at": "2026-10-25T11:02:54.943Z",
+      "last_login_at": "2026-10-25T10:52:07.653Z"
+    },
+    {
+      "id": 8,
+      "username": "Nikita",
+      "full_name": "Nikita",
+      "email": "nikitasable689@gmail.com",
+      "password_hash": "$2b$10$ppgn/Me/eIgY4qiQCL.glesK0o9DMlEgjAIEqpTLa7dwIShfE.DQW",
+      "role_id": "viewer",
+      "is_active": 0,
+      "created_at": "2026-10-25T10:54:22.721Z",
+      "updated_at": "2026-10-25T11:02:47.137Z",
+      "last_login_at": "2026-10-25T10:54:22.721Z"
+    },
+    {
+      "id": 10,
+      "username": "Sanchi",
+      "full_name": "Sanchi",
+      "email": "nikitasable274@gmail.com",
+      "password_hash": "$2b$10$YV8alcfWU/W71sJZjeFJX.WUxd0xxg..EAEfwjeZJ75C6EqD0xS/.",
+      "role_id": "inventory_manager",
+      "is_active": 1,
+      "created_at": "2026-10-25T11:02:44.161Z",
+      "updated_at": "2026-10-25T11:05:25.498Z",
+      "last_login_at": "2026-10-25T11:02:44.161Z"
+    },
+    {
+      "id": 11,
+      "username": "Tanisha123",
+      "full_name": "Tanisha Raina",
+      "email": "tanisharaina@gmail.com",
+      "password_hash": "$2b$10$DBdPyM.uSejGUDRvwTzV5.EswDaSyD6127mNW/qZuTaxwW1234hEC",
+      "role_id": "inventory_manager",
+      "is_active": 1,
+      "created_at": "2026-10-25T11:02:45.177Z",
+      "updated_at": "2026-10-25T11:03:18.578Z",
+      "last_login_at": "2026-10-25T11:02:45.177Z"
+    }
+  ],
+  "user_permissions": [
+    {
+      "user_id": 10,
+      "permission_id": "inventory.adjust_stock",
+      "granted_at": "2026-10-25T11:12:01.994Z",
+      "granted_by": 5
+    },
+    {
+      "user_id": 10,
+      "permission_id": "inventory.create",
+      "granted_at": "2026-10-25T11:12:01.994Z",
+      "granted_by": 5
+    },
+    {
+      "user_id": 10,
+      "permission_id": "inventory.delete",
+      "granted_at": "2026-10-25T11:12:01.994Z",
+      "granted_by": 5
+    },
+    {
+      "user_id": 10,
+      "permission_id": "inventory.search",
+      "granted_at": "2026-10-25T11:12:01.994Z",
+      "granted_by": 5
+    },
+    {
+      "user_id": 10,
+      "permission_id": "inventory.update",
+      "granted_at": "2026-10-25T11:12:01.994Z",
+      "granted_by": 5
+    },
+    {
+      "user_id": 10,
+      "permission_id": "inventory.view",
+      "granted_at": "2026-10-25T11:12:01.994Z",
+      "granted_by": 5
+    }
+  ],
+  "products": [
+    {
+      "product_id": 101,
+      "name": "Ergonomic Mechanical Keyboard",
+      "category": "Peripherals",
+      "quantity": 25,
+      "price": 89.99,
+      "description": "RGB backlit mechanical keyboard with tactile switches",
+      "created_at": "2026-10-25T09:35:54.823Z",
+      "updated_at": "2026-10-25T09:35:54.823Z"
+    },
+    {
+      "product_id": 102,
+      "name": "Wireless Precision Mouse",
+      "category": "Peripherals",
+      "quantity": 42,
+      "price": 45.5,
+      "description": "High DPI ergonomic mouse with rechargeable battery",
+      "created_at": "2026-10-25T09:35:54.823Z",
+      "updated_at": "2026-10-25T09:35:54.823Z"
+    },
+    {
+      "product_id": 103,
+      "name": "27-inch 4K UHD Monitor",
+      "category": "Displays",
+      "quantity": 12,
+      "price": 349.99,
+      "description": "IPS panel with HDR400 and ultra-thin bezels",
+      "created_at": "2026-10-25T09:35:54.823Z",
+      "updated_at": "2026-10-25T09:35:54.823Z"
+    },
+    {
+      "product_id": 104,
+      "name": "USB-C Multiport Adapter 7-in-1",
+      "category": "Accessories",
+      "quantity": 5,
+      "price": 29.99,
+      "description": "HDMI 4K, USB 3.0, and 100W PD charging pass-through",
+      "created_at": "2026-10-25T09:35:54.823Z",
+      "updated_at": "2026-10-25T09:35:54.823Z"
+    },
+    {
+      "product_id": 105,
+      "name": "Gigabit Ethernet Switch 16-Port",
+      "category": "Networking",
+      "quantity": 8,
+      "price": 119,
+      "description": "Managed gigabit desktop/rackmount switch",
+      "created_at": "2026-10-25T09:35:54.823Z",
+      "updated_at": "2026-10-25T09:35:54.823Z"
+    },
+    {
+      "product_id": 106,
+      "name": "Ultra-Fast 1TB NVMe M.2 SSD",
+      "category": "Storage",
+      "quantity": 18,
+      "price": 95,
+      "description": "PCIe Gen 4.0 read speeds up to 7000 MB/s",
+      "created_at": "2026-10-25T09:35:54.823Z",
+      "updated_at": "2026-10-25T09:35:54.823Z"
+    },
+    {
+      "product_id": 107,
+      "name": "Noise-Cancelling Bluetooth Headset",
+      "category": "Audio",
+      "quantity": 0,
+      "price": 129.99,
+      "description": "Active noise cancellation with dual beamforming microphones",
+      "created_at": "2026-10-25T09:35:54.823Z",
+      "updated_at": "2026-10-25T09:35:54.823Z"
+    },
+    {
+      "product_id": 108,
+      "name": "Direct Thermal Barcode Printer",
+      "category": "Office Equipment",
+      "quantity": 3,
+      "price": 180,
+      "description": "High-speed 4x6 commercial label and barcode printer",
+      "created_at": "2026-10-25T09:35:54.823Z",
+      "updated_at": "2026-10-25T09:35:54.823Z"
+    },
+    {
+      "product_id": 109,
+      "name": "Standing Desk Converter 36-inch",
+      "category": "Furniture",
+      "quantity": 14,
+      "price": 210,
+      "description": "Gas spring height adjustable dual-tier tabletop",
+      "created_at": "2026-10-25T09:35:54.823Z",
+      "updated_at": "2026-10-25T09:35:54.823Z"
+    },
+    {
+      "product_id": 110,
+      "name": "Cat6 Snagless Patch Cable 10ft",
+      "category": "Networking",
+      "quantity": 120,
+      "price": 7.99,
+      "description": "Shielded twisted pair pure bare copper wire",
+      "created_at": "2026-10-25T09:35:54.823Z",
+      "updated_at": "2026-10-25T09:35:54.823Z"
+    },
+    {
+      "product_id": 111,
+      "name": "HD 1080p Webcam with Dual Mic",
+      "category": "Peripherals",
+      "quantity": 0,
+      "price": 59.99,
+      "description": "Auto-focus widescreen video calling camera",
+      "created_at": "2026-10-25T09:35:54.823Z",
+      "updated_at": "2026-10-25T09:35:54.823Z"
+    },
+    {
+      "product_id": 112,
+      "name": "Laptop Cooling Pad Dual 140mm",
+      "category": "Accessories",
+      "quantity": 34,
+      "price": 24.5,
+      "description": "Quiet LED cooling stand for laptops up to 17 inches",
+      "created_at": "2026-10-25T09:35:54.823Z",
+      "updated_at": "2026-10-25T09:35:54.823Z"
+    },
+    {
+      "product_id": 113,
+      "name": "Smart Battery Backup UPS 1500VA",
+      "category": "Hardware",
+      "quantity": 7,
+      "price": 249.99,
+      "description": "LCD line-interactive surge protection and battery power",
+      "created_at": "2026-10-25T09:35:54.823Z",
+      "updated_at": "2026-10-25T09:35:54.823Z"
+    },
+    {
+      "product_id": 114,
+      "name": "Ergonomic Mesh Swivel Chair",
+      "category": "Furniture",
+      "quantity": 9,
+      "price": 289,
+      "description": "Adjustable lumbar support with breathable mesh back",
+      "created_at": "2026-10-25T09:35:54.823Z",
+      "updated_at": "2026-10-25T09:35:54.823Z"
+    },
+    {
+      "product_id": 115,
+      "name": "Dual Heavy-Duty Monitor Desk Mount",
+      "category": "Hardware",
+      "quantity": 22,
+      "price": 65,
+      "description": "Full motion gas spring articulating monitor arms",
+      "created_at": "2026-10-25T09:35:54.823Z",
+      "updated_at": "2026-10-25T09:35:54.823Z"
+    },
+    {
+      "product_id": 128,
+      "name": "Milk",
+      "category": "Dairy",
+      "quantity": 5,
+      "price": 30,
+      "description": "",
+      "created_at": "2026-10-25T10:42:24.450Z",
+      "updated_at": "2026-10-25T10:42:24.450Z"
+    },
+    {
+      "product_id": 222,
+      "name": "Laptop",
+      "category": "Hardware",
+      "quantity": 20,
+      "price": 86000,
+      "description": "",
+      "created_at": "2026-10-25T10:57:37.694Z",
+      "updated_at": "2026-10-25T11:18:14.984Z"
+    }
+  ],
+  "settings": [
+    {
+      "key": "low_stock_threshold",
+      "value": "10"
+    },
+    {
+      "key": "system_name",
+      "value": "StockPilot"
+    }
+  ]
+}
