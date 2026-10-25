@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>StockPilot - Access Permissions Matrix</title>
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+</head>
+<body>
+  <div class="app-container">
+    <!-- Sidebar Navigation -->
+    <aside class="sidebar">
+      <div class="sidebar-header">
+        <a href="/dashboard.html" class="brand-logo">
+          <div class="brand-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
+              <polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline>
+              <line x1="12" y1="22.08" x2="12" y2="12"></line>
+            </svg>
+          </div>
+          <div>StockPilot</div>
+        </a>
+        <span class="brand-badge">v1.0</span>
+      </div>
+
+      <nav class="sidebar-nav">
+        <div class="nav-section-title">Core Operations</div>
+        <a href="/dashboard.html" class="nav-link">
+          <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
+          Dashboard
+        </a>
+        <a href="/inventory.html" class="nav-link">
+          <svg viewBox="0 0 24 24"><path d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/></svg>
+          Inventory Catalog
+        </a>
+        <a href="/search.html" class="nav-link">
+          <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+          Search Algorithms
+        </a>
+
+        <div class="nav-section-title" data-perm="users.view">Administration</div>
+        <a href="/users.html" class="nav-link" data-perm="users.view">
+          <svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+          User Management
+        </a>
+        <a href="/permissions.html" class="nav-link active" data-perm="permissions.manage">
+          <svg viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+          Access Permissions
+        </a>
+        <a href="/audit.html" class="nav-link" data-perm="audit.view">
+          <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+          Audit History
+        </a>
+      </nav>
+
+      <div class="sidebar-footer">
+        <div class="user-snippet">
+          <div class="user-avatar js-user-avatar">A</div>
+          <div class="user-details">
+            <div class="user-name js-user-name">Loading...</div>
+            <span class="user-role-badge js-user-role-badge">...</span>
+          </div>
+          <button class="btn-logout js-logout-btn" title="Sign Out">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:18px;height:18px;"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
+          </button>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Main Workspace -->
+    <main class="main-wrapper">
+      <header class="top-navbar">
+        <div style="display:flex; align-items:center; gap:14px;">
+          <button class="nav-toggle-btn" aria-label="Toggle Navigation">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:20px;height:20px;"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+          </button>
+          <div class="page-title-group">
+            <h1>Granular Access Control Matrix</h1>
+            <p>Direct privilege assignment and real-time backend permission enforcement</p>
+          </div>
+        </div>
+
+        <div class="navbar-actions">
+          <a href="/users.html" class="btn btn-secondary btn-sm">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle></svg>
+            User List
+          </a>
+        </div>
+      </header>
+
+      <div class="content-body">
+        <!-- User Selection Card -->
+        <div class="card" style="margin-bottom: 24px;">
+          <div class="card-body">
+            <div style="display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:16px;">
+              <div style="flex:1; min-width:280px;">
+                <label class="form-label" for="selectTargetUser">Select User Account to Inspect or Modify Permissions</label>
+                <select id="selectTargetUser" class="form-control" style="font-size:1rem; font-weight:600; padding:12px;">
+                  <option value="">Loading users...</option>
+                </select>
+              </div>
+              <div id="targetUserInfoBox" style="display:none; align-items:center; gap:12px; padding:10px 16px; background:var(--gray-50); border:1px solid var(--gray-200); border-radius:var(--radius-md);">
+                <div style="font-size:0.85rem;">
+                  Assigned Role: <span id="targetUserRoleBadge" class="user-role-badge"></span>
+                </div>
+                <div style="font-size:0.85rem;">
+                  Account: <span id="targetUserStatusBadge" class="badge"></span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Permissions Matrix Form -->
+        <div class="card" id="permissionMatrixCard">
+          <div class="card-header">
+            <div class="card-title">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+              Permission Privileges Breakdown
+            </div>
+            <button id="savePermissionsBtn" class="btn btn-primary btn-sm" disabled>
+              Save Permission Changes
+            </button>
+          </div>
+          <div class="card-body" id="permissionsListContainer">
+            <div class="empty-state">Select a user above to view and configure their security permissions.</div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script src="/js/common.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', async () => {
+      const session = await StockPilot.initPage({ requiresAuth: true, requiredPermission: 'permissions.manage' });
+      if (!session) return;
+
+      const userSelect = document.getElementById('selectTargetUser');
+      const container = document.getElementById('permissionsListContainer');
+      const saveBtn = document.getElementById('savePermissionsBtn');
+      const infoBox = document.getElementById('targetUserInfoBox');
+      const roleBadge = document.getElementById('targetUserRoleBadge');
+      const statusBadge = document.getElementById('targetUserStatusBadge');
+
+      let currentUserId = null;
+      let currentUserData = null;
+
+      loadUserDropdown();
+
+      async function loadUserDropdown() {
+        try {
+          const res = await fetch('/api/users');
+          if (!res.ok) throw new Error('Failed to load users');
+          const users = await res.json();
+
+          userSelect.innerHTML = '<option value="">-- Choose User Account --</option>' + 
+            users.map(u => `<option value="${u.id}">${u.username} (${u.fullName}) [${StockPilot.formatRoleName(u.role)}]</option>`).join('');
+
+          // Select second user (e.g. manager or viewer) by default if available
+          if (users.length > 1) {
+            userSelect.value = users[1].id;
+            loadPermissionsForUser(users[1].id);
+          }
+        } catch (err) {
+          console.error(err);
+          userSelect.innerHTML = '<option value="">Failed to load users</option>';
+        }
+      }
+
+      userSelect.addEventListener('change', (e) => {
+        const uid = e.target.value;
+        if (uid) {
+          loadPermissionsForUser(uid);
+        } else {
+          container.innerHTML = '<div class="empty-state">Select a user above to view and configure their security permissions.</div>';
+          saveBtn.disabled = true;
+          infoBox.style.display = 'none';
+        }
+      });
+
+      async function loadPermissionsForUser(userId) {
+        currentUserId = userId;
+        saveBtn.disabled = true;
+        container.innerHTML = '<div class="empty-state">Loading user permissions...</div>';
+
+        try {
+          const res = await fetch(`/api/users/${userId}`);
+          if (!res.ok) throw new Error('Failed to load user permissions');
+          const data = await res.json();
+          currentUserData = data;
+
+          // Render info
+          infoBox.style.display = 'flex';
+          roleBadge.textContent = StockPilot.formatRoleName(data.role);
+          roleBadge.className = 'user-role-badge ' + StockPilot.getRoleBadgeClass(data.role);
+
+          statusBadge.textContent = data.isActive ? 'Active' : 'Deactivated';
+          statusBadge.className = 'badge ' + (data.isActive ? 'badge-success' : 'badge-danger');
+
+          const isSelf = StockPilot.currentUser && StockPilot.currentUser.id === Number(userId);
+          const isSuperAdmin = data.role === 'super_admin';
+
+          if (isSelf) {
+            saveBtn.disabled = true;
+            saveBtn.title = 'Cannot edit own permissions';
+          } else if (isSuperAdmin) {
+            saveBtn.disabled = true;
+            saveBtn.title = 'Super Administrator has all permissions';
+          } else {
+            saveBtn.disabled = false;
+            saveBtn.title = '';
+          }
+
+          renderPermissionCards(data.permissions, isSuperAdmin, isSelf);
+        } catch (err) {
+          container.innerHTML = `<div class="empty-state">${err.message}</div>`;
+        }
+      }
+
+      function renderPermissionCards(permissions, isSuperAdmin, isSelf) {
+        if (isSuperAdmin) {
+          container.innerHTML = `
+            <div style="padding:20px; background:#EEF2FF; border:1px solid #C7D2FE; border-radius:var(--radius-lg); color:#3730A3;">
+              <h3 style="font-size:1.1rem; font-weight:700; margin-bottom:6px;">Inherent Super Administrator Access</h3>
+              <p style="font-size:0.9rem;">
+                This user holds the <strong>Super Administrator</strong> role. By design, Super Administrators automatically possess full, unrestricted access to all ${permissions.length} system privileges.
+              </p>
+            </div>
+          `;
+          return;
+        }
+
+        if (isSelf) {
+          container.innerHTML = `
+            <div style="padding:16px; background:#FEF3C7; border:1px solid #FDE68A; border-radius:var(--radius-md); color:#92400E; margin-bottom:16px;">
+              <strong>Security Rule Enforced:</strong> You cannot modify your own access privileges. Please ask another authorized administrator to adjust your permissions.
+            </div>
+          ` + buildMatrixHtml(permissions, true);
+          return;
+        }
+
+        container.innerHTML = buildMatrixHtml(permissions, false);
+      }
+
+      function buildMatrixHtml(permissions, disabled) {
+        const grouped = {};
+        for (const p of permissions) {
+          if (!grouped[p.category]) grouped[p.category] = [];
+          grouped[p.category].push(p);
+        }
+
+        let html = '<div class="permissions-grid">';
+        for (const [category, perms] of Object.entries(grouped)) {
+          html += `
+            <div class="permission-category-block">
+              <div class="permission-category-title">${category.toUpperCase()} PERMISSIONS</div>
+              ${perms.map(p => `
+                <div class="permission-item">
+                  <input type="checkbox" class="permission-checkbox js-perm-check" 
+                    id="page_perm_${p.id}" 
+                    value="${p.id}" 
+                    ${p.granted ? 'checked' : ''} 
+                    ${disabled ? 'disabled' : ''} />
+                  <label for="page_perm_${p.id}" style="cursor:${disabled ? 'default' : 'pointer'}; flex:1;">
+                    <div class="permission-label">
+                      ${p.name} 
+                      <span style="font-family:var(--font-mono); font-size:0.75rem; color:var(--gray-400);">(${p.id})</span>
+                      ${p.source === 'role' ? '<span class="badge badge-gray" style="font-size:0.65rem;">Default from Role</span>' : ''}
+                      ${p.source === 'custom' ? '<span class="badge badge-purple" style="font-size:0.65rem;">Custom Override</span>' : ''}
+                    </div>
+                    <div class="permission-desc">${p.description}</div>
+                  </label>
+                </div>
+              `).join('')}
+            </div>
+          `;
+        }
+        html += '</div>';
+        return html;
+      }
+
+      saveBtn.addEventListener('click', async () => {
+        if (!currentUserId) return;
+        const selected = Array.from(document.querySelectorAll('.js-perm-check:checked')).map(cb => cb.value);
+
+        try {
+          saveBtn.disabled = true;
+          saveBtn.textContent = 'Saving...';
+
+          const res = await fetch(`/api/users/${currentUserId}/permissions`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ permissions: selected })
+          });
+
+          const data = await res.json();
+          if (!res.ok) {
+            StockPilot.showToast('Save Failed', data.error || 'Server rejected changes.', 'error');
+            return;
+          }
+
+          StockPilot.showToast('Success', `Permissions saved. User holds ${data.permissions.length} active permissions.`, 'success');
+          loadPermissionsForUser(currentUserId);
+        } catch (err) {
+          StockPilot.showToast('Network Error', err.message, 'error');
+        } finally {
+          saveBtn.disabled = false;
+          saveBtn.textContent = 'Save Permission Changes';
+        }
+      });
+    });
+  </script>
+</body>
+</html>

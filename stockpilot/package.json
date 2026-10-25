@@ -1,0 +1,32 @@
+{
+  "name": "stockpilot",
+  "version": "1.0.0",
+  "description": "StockPilot - Professional Inventory Management System with Role-Based Access Control and Algorithm Demonstrations",
+  "main": "src/server.js",
+  "scripts": {
+    "start": "node src/server.js",
+    "dev": "node --watch src/server.js",
+    "seed": "node scripts/seed.js",
+    "create-admin": "node scripts/create-admin.js",
+    "set-user": "node scripts/set-user.js",
+    "test": "node --test tests/*.test.js"
+  },
+  "keywords": [
+    "inventory",
+    "rbac",
+    "searching-algorithms",
+    "linear-search",
+    "binary-search",
+    "sqlite",
+    "express"
+  ],
+  "author": "StockPilot Team",
+  "license": "ISC",
+  "dependencies": {
+    "bcryptjs": "^3.0.3",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2",
+    "express-session": "^1.18.1"
+  }
+}

@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>StockPilot - Inventory Management</title>
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+</head>
+<body>
+  <div class="app-container">
+    <!-- Sidebar Navigation -->
+    <aside class="sidebar">
+      <div class="sidebar-header">
+        <a href="/dashboard.html" class="brand-logo">
+          <div class="brand-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
+              <polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline>
+              <line x1="12" y1="22.08" x2="12" y2="12"></line>
+            </svg>
+          </div>
+          <div>StockPilot</div>
+        </a>
+        <span class="brand-badge">v1.0</span>
+      </div>
+
+      <nav class="sidebar-nav">
+        <div class="nav-section-title">Core Operations</div>
+        <a href="/dashboard.html" class="nav-link">
+          <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
+          Dashboard
+        </a>
+        <a href="/inventory.html" class="nav-link active">
+          <svg viewBox="0 0 24 24"><path d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/></svg>
+          Inventory Catalog
+        </a>
+        <a href="/search.html" class="nav-link">
+          <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+          Search Algorithms
+        </a>
+
+        <div class="nav-section-title" data-perm="users.view">Administration</div>
+        <a href="/users.html" class="nav-link" data-perm="users.view">
+          <svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+          User Management
+        </a>
+        <a href="/permissions.html" class="nav-link" data-perm="permissions.manage">
+          <svg viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+          Access Permissions
+        </a>
+        <a href="/audit.html" class="nav-link" data-perm="audit.view">
+          <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+          Audit History
+        </a>
+      </nav>
+
+      <div class="sidebar-footer">
+        <div class="user-snippet">
+          <div class="user-avatar js-user-avatar">A</div>
+          <div class="user-details">
+            <div class="user-name js-user-name">Loading...</div>
+            <span class="user-role-badge js-user-role-badge">...</span>
+          </div>
+          <button class="btn-logout js-logout-btn" title="Sign Out">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:18px;height:18px;"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
+          </button>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Main Workspace -->
+    <main class="main-wrapper">
+      <header class="top-navbar">
+        <div style="display:flex; align-items:center; gap:14px;">
+          <button class="nav-toggle-btn" aria-label="Toggle Navigation">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:20px;height:20px;"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+          </button>
+          <div class="page-title-group">
+            <h1>Product Inventory Management</h1>
+            <p>Maintain SKUs, stock levels, valuations, and catalog metadata</p>
+          </div>
+        </div>
+
+        <div class="navbar-actions">
+          <button id="openThresholdBtn" class="btn btn-secondary btn-sm" data-perm="settings.manage" title="Configure low stock alert threshold">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+            Threshold Settings
+          </button>
+          <button id="openAddProductBtn" class="btn btn-primary btn-sm" data-perm="inventory.create">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+            Add New Product
+          </button>
+        </div>
+      </header>
+
+      <div class="content-body">
+        <!-- Filter and Search Toolbar -->
+        <div class="card" style="margin-bottom: 20px;">
+          <div class="card-body" style="padding: 16px 20px;">
+            <div style="display:flex; flex-wrap:wrap; gap:12px; align-items:center; justify-content:space-between;">
+              <div style="flex:1; min-width:240px; max-width:400px; position:relative;">
+                <input type="text" id="inventorySearchInput" class="form-control" placeholder="Search by SKU, name, or description...">
+              </div>
+
+              <div style="display:flex; flex-wrap:wrap; gap:10px; align-items:center;">
+                <!-- Category Filter -->
+                <select id="categoryFilter" class="form-control" style="width: auto; min-width: 150px;">
+                  <option value="">All Categories</option>
+                </select>
+
+                <!-- Stock Filter -->
+                <select id="stockStatusFilter" class="form-control" style="width: auto; min-width: 140px;">
+                  <option value="">All Stock Status</option>
+                  <option value="IN_STOCK">In Stock</option>
+                  <option value="LOW_STOCK">Low Stock</option>
+                  <option value="OUT_OF_STOCK">Out of Stock</option>
+                </select>
+
+                <!-- Sort Filter -->
+                <select id="inventorySortSelect" class="form-control" style="width: auto; min-width: 160px;">
+                  <option value="product_id:ASC">SKU: Low to High</option>
+                  <option value="product_id:DESC">SKU: High to Low</option>
+                  <option value="name:ASC">Name: A to Z</option>
+                  <option value="quantity:ASC">Stock: Low to High</option>
+                  <option value="quantity:DESC">Stock: High to Low</option>
+                  <option value="price:DESC">Price: High to Low</option>
+                  <option value="price:ASC">Price: Low to High</option>
+                </select>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Inventory Data Table -->
+        <div class="card">
+          <div class="table-responsive">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Product ID</th>
+                  <th>Product Name</th>
+                  <th>Category</th>
+                  <th>Quantity</th>
+                  <th>Unit Price</th>
+                  <th>Total Value</th>
+                  <th>Stock Status</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="inventoryTableBody">
+                <tr><td colspan="8" class="empty-state">Loading inventory catalog...</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="card-footer" id="paginationControls">
+            <!-- Rendered by JavaScript -->
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- ADD PRODUCT MODAL -->
+  <div class="modal-overlay" id="addProductModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 class="modal-title">Add New Inventory Product</h3>
+        <button class="modal-close" data-modal-close>&times;</button>
+      </div>
+      <form id="addProductForm">
+        <div class="modal-body">
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label" for="addProductId">Product ID (Unique) <span class="required">*</span></label>
+              <input type="number" id="addProductId" class="form-control" placeholder="e.g. 116" min="1" required>
+              <div class="form-hint">Unique positive integer ID for searching algorithms.</div>
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="addProductCategory">Category <span class="required">*</span></label>
+              <input type="text" id="addProductCategory" class="form-control" placeholder="e.g. Peripherals" required>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="addProductName">Product Name <span class="required">*</span></label>
+            <input type="text" id="addProductName" class="form-control" placeholder="e.g. Wireless Mechanical Keyboard" required>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label" for="addProductQuantity">Quantity in Stock <span class="required">*</span></label>
+              <input type="number" id="addProductQuantity" class="form-control" placeholder="0" min="0" required>
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="addProductPrice">Unit Price ($) <span class="required">*</span></label>
+              <input type="number" id="addProductPrice" class="form-control" placeholder="0.00" min="0" step="0.01" required>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="addProductDescription">Description (Optional)</label>
+            <textarea id="addProductDescription" class="form-control" rows="3" placeholder="Technical specifications, dimensions, SKU details..."></textarea>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-modal-close>Cancel</button>
+          <button type="submit" class="btn btn-primary">Create Product</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- EDIT PRODUCT MODAL -->
+  <div class="modal-overlay" id="editProductModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 class="modal-title">Edit Product <span id="editProductIdDisplay" style="color:var(--primary-600); font-family:var(--font-mono);"></span></h3>
+        <button class="modal-close" data-modal-close>&times;</button>
+      </div>
+      <form id="editProductForm">
+        <input type="hidden" id="editProductId">
+        <div class="modal-body">
+          <div class="form-group">
+            <label class="form-label" for="editProductName">Product Name <span class="required">*</span></label>
+            <input type="text" id="editProductName" class="form-control" required>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label" for="editProductCategory">Category <span class="required">*</span></label>
+              <input type="text" id="editProductCategory" class="form-control" required>
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="editProductPrice">Unit Price ($) <span class="required">*</span></label>
+              <input type="number" id="editProductPrice" class="form-control" min="0" step="0.01" required>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="editProductQuantity">Stock Quantity <span class="required">*</span></label>
+            <input type="number" id="editProductQuantity" class="form-control" min="0" required>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="editProductDescription">Description</label>
+            <textarea id="editProductDescription" class="form-control" rows="3"></textarea>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-modal-close>Cancel</button>
+          <button type="submit" class="btn btn-primary">Save Changes</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ADJUST STOCK MODAL -->
+  <div class="modal-overlay" id="adjustStockModal">
+    <div class="modal-content" style="max-width: 480px;">
+      <div class="modal-header">
+        <h3 class="modal-title">Stock Quantity Adjustment</h3>
+        <button class="modal-close" data-modal-close>&times;</button>
+      </div>
+      <form id="adjustStockForm">
+        <input type="hidden" id="adjustProductId">
+        <div class="modal-body">
+          <div style="background:var(--gray-50); border:1px solid var(--gray-200); padding:12px; border-radius:var(--radius-md); margin-bottom:18px;">
+            <div style="font-size:0.8rem; color:var(--gray-500);">Product:</div>
+            <strong id="adjustProductNameDisplay" style="font-size:0.95rem; color:var(--gray-900);"></strong>
+            <div style="margin-top:6px; font-size:0.85rem;">Current Inventory: <strong id="adjustCurrentStockDisplay" style="color:var(--primary-700);"></strong></div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="adjustTypeSelect">Adjustment Operation <span class="required">*</span></label>
+            <select id="adjustTypeSelect" class="form-control">
+              <option value="add">Add Units (Received shipment / Restock)</option>
+              <option value="subtract">Deduct Units (Sales order / Damaged return)</option>
+              <option value="set">Set Absolute Total (Audit reconciliation)</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="adjustAmountInput">Quantity Units <span class="required">*</span></label>
+            <input type="number" id="adjustAmountInput" class="form-control" min="0" required>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="adjustReasonInput">Reason / Audit Note</label>
+            <input type="text" id="adjustReasonInput" class="form-control" placeholder="e.g. Weekly inventory audit reconciliation">
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-modal-close>Cancel</button>
+          <button type="submit" class="btn btn-primary">Apply Stock Update</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- THRESHOLD CONFIG MODAL -->
+  <div class="modal-overlay" id="thresholdModal">
+    <div class="modal-content" style="max-width: 440px;">
+      <div class="modal-header">
+        <h3 class="modal-title">Low Stock Alert Threshold</h3>
+        <button class="modal-close" data-modal-close>&times;</button>
+      </div>
+      <form id="thresholdForm">
+        <div class="modal-body">
+          <p style="font-size:0.85rem; color:var(--gray-600); margin-bottom:16px;">
+            Configure the minimum unit count before an inventory SKU is flagged with a <strong>Low Stock</strong> warning across dashboards and tables.
+          </p>
+          <div class="form-group">
+            <label class="form-label" for="thresholdValueInput">Threshold Units Count <span class="required">*</span></label>
+            <input type="number" id="thresholdValueInput" class="form-control" min="1" max="1000" required>
+            <div class="form-hint">Products with quantity &le; this number and &gt; 0 will display the amber warning badge.</div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-modal-close>Cancel</button>
+          <button type="submit" class="btn btn-primary">Save Threshold</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script src="/js/common.js"></script>
+  <script src="/js/inventory.js"></script>
+</body>
+</html>
