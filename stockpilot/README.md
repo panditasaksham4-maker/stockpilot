@@ -1,334 +1,246 @@
 # StockPilot — Inventory Management System
-> Professional Application Prototype with Role-Based Access Control (RBAC) & Algorithmic Array Processing
+> Professional Application with Role-Based Access Control (RBAC), Algorithmic Array Processing & Production-Ready Cloud Deployment
 
-StockPilot is an enterprise-grade, modern, and responsive Inventory Management System built with Node.js, Express.js, SQLite, and vanilla ES6+ frontend technologies. Designed as an academic prototype that mimics commercial software architecture, StockPilot combines strict permission-based access control (RBAC), immutable security audit logging, persistent transactional storage, and manual implementations of core searching algorithms (Linear Search and Binary Search) operating on synchronized in-memory JavaScript arrays.
-
----
-
-## Key Features
-
-### 1. Robust Role-Based Access Control (RBAC) & Granular Permissions
-- **Predefined System Roles**:
-  - **Super Administrator**: Full system access, catalog CRUD, user management, fine-grained permission assignments, threshold settings, and audit logs.
-  - **Inventory Manager**: Add, edit, view, search, and adjust stock quantities. Excludes destructive deletion, user creation, or permission management.
-  - **Viewer**: Read-only catalog browsing, product details inspection, and search algorithm demonstrations.
-  - **Custom User**: Granular, individual permission overrides assigned by an administrator.
-- **13 Fine-Grained Permissions**:
-  - `inventory.view`, `inventory.search`, `inventory.create`, `inventory.update`, `inventory.delete`, `inventory.adjust_stock`
-  - `users.view`, `users.create`, `users.update`, `users.deactivate`
-  - `permissions.manage`
-  - `audit.view`
-  - `settings.manage`
-- **Strict Server-Side Enforcement**: All API requests (`POST`, `PUT`, `PATCH`, `DELETE`) are strictly validated against active session permissions on the backend. Hiding UI elements is merely a usability aid; direct API attempts by unauthorized users return HTTP `403 Forbidden` and trigger automated audit log entries.
-- **Privilege Safeguards**:
-  - Users cannot self-escalate their roles or modify their own permissions.
-  - Deactivation or demotion of the last remaining active Super Administrator is strictly prevented.
-
-### 2. Academic Searching Algorithms Laboratory
-- **Array Data Structure Synchronization**:
-  - Dynamic inventory data from SQLite is continuously synchronized into an in-memory JavaScript array (`inMemoryInventory`).
-  - Separates persistent disk I/O from array algorithm executions.
-- **Linear Search Algorithm**:
-  - Manual sequential traversal over the in-memory array.
-  - Accurate comparison counting for each index evaluated.
-  - Time complexity: Best Case \(O(1)\), Average Case \(O(n)\), Worst Case \(O(n)\).
-- **Binary Search Algorithm**:
-  - Strictly requires an ordered dataset. A copy of the inventory array is created and sorted by `productId` ascending prior to search execution.
-  - Manual iterative divide-and-conquer implementation with `low`, `mid`, and `high` pointers.
-  - Time complexity: Best Case \(O(1)\), Average Case \(O(\log n)\), Worst Case \(O(\log n)\).
-- **Dual Comparison Engine**:
-  - Executes Linear and Binary search simultaneously on the identical target SKU.
-  - Displays real side-by-side comparison counts, runtime in milliseconds, and step-by-step search intervals.
-
-### 3. Inventory Catalog & Stock Telemetry
-- Complete product lifecycle: SKU ID, Product Name, Category, Stock Quantity, Unit Price, Total Valuation (\(\sum \text{Qty} \times \text{Price}\)), Created At, and Updated At timestamps.
-- Stock statuses: **In Stock**, **Low Stock**, and **Out of Stock**.
-- Configurable **Low Stock Alert Threshold** (persisted in SQLite settings).
-- Stock Adjustment modal with audit trail recording (shipment restock, shrinkage deductions, or recount reconciliations).
-- Negative stock protection (prevents inventory from dropping below zero).
-
-### 4. Immutable Security Audit Trail
-- Automated logging for:
-  - User login successes, failures, and logouts.
-  - Product creation, modifications, deletions, and stock quantity adjustments.
-  - Account creations, role changes, and account activations/deactivations.
-  - Fine-grained permission assignments and revocations.
-  - Unauthorized API modification attempts (`DENIED`).
-- Read-only protection: Audit logs cannot be modified or deleted by any user.
+StockPilot is an enterprise-grade, modern, and responsive Inventory Management System built with Node.js, Express.js, SQLite, and vanilla ES6+ frontend technologies. StockPilot combines strict permission-based access control (RBAC), immutable security audit logging, persistent transactional storage, and manual implementations of core searching algorithms (Linear Search and Binary Search) operating on synchronized in-memory JavaScript arrays.
 
 ---
 
-## Technology Stack
+## Production Deployment on Render
 
-- **Backend Runtime**: Node.js (v18+ / v20+ / v24+) with Express.js.
-- **Database**: SQLite (via native `node:sqlite` DatabaseSync or `better-sqlite3`) with WAL mode and foreign key constraints.
-- **Password Security**: `bcryptjs` salted hashing (10 salt rounds).
-- **Session Architecture**: `express-session` with `httpOnly`, `sameSite: 'lax'`, and session regeneration upon login.
-- **Frontend Architecture**: Semantic HTML5, CSS3 Custom Properties (Design System), Vanilla JavaScript (Modular ES6+).
-- **Test Framework**: Node.js Native Test Runner (`node:test`, `node:assert/strict`).
+StockPilot is fully configured for zero-downtime, persistent deployment on [Render](https://render.com).
+
+### Architecture on Render
+* **Runtime**: Node.js (v22+ recommended; uses Node's native `node:sqlite` engine with zero external C++ build tool dependencies).
+* **Networking**: Listens on `0.0.0.0` and `process.env.PORT || 3000`. Express is configured with `app.set('trust proxy', 1)` to handle secure sessions behind Render's HTTPS reverse proxy.
+* **Persistent Storage**: Uses a Render Persistent Disk mounted at `/var/data` with `DATABASE_PATH=/var/data/stockpilot.sqlite`. This ensures inventory records, registered users, permissions, and audit logs persist permanently across redeploys and restarts.
+* **Idempotency**: Database schema initialization executes `CREATE TABLE IF NOT EXISTS` and `INSERT OR IGNORE`. Existing tables, data, and user records are **never deleted, reset, or overwritten** on startup.
 
 ---
 
-## Project Structure
+### Step-by-Step Render Deployment
 
-```text
-stockpilot/
-│
-├── public/                       # Frontend User Interface
-│   ├── index.html                # Entry point redirect
-│   ├── login.html                # Login screen with 1-click demo role chips
-│   ├── dashboard.html            # Executive metrics & activity telemetry
-│   ├── inventory.html            # Catalog table, filters, and CRUD modals
-│   ├── search.html               # Searching algorithms laboratory & trace
-│   ├── users.html                # User accounts & status toggling
-│   ├── permissions.html          # Fine-grained access permissions matrix
-│   ├── audit.html                # Security audit trail & filtering
-│   ├── css/
-│   │   └── style.css             # Enterprise navy/gray design system
-│   └── js/
-│       ├── common.js             # Session auth, RBAC UI adapter, toasts, modals
-│       ├── auth.js               # Login form & demo credentials helper
-│       ├── dashboard.js          # Dashboard KPIs & telemetry charts
-│       ├── inventory.js          # Catalog CRUD & stock adjustment controller
-│       ├── search.js             # Algorithmic search visualizer & trace
-│       ├── users.js              # User management & permission matrix modal
-│       └── audit.js              # Audit trail querying & filter controller
-│
-├── src/                          # Server-Side Application
-│   ├── server.js                 # Express server & session initialization
-│   ├── database/
-│   │   ├── db.js                 # SQLite connection & seed adapter
-│   │   └── schema.sql            # Relational database schema DDL
-│   ├── middleware/
-│   │   ├── authenticate.js       # Session check & active user validation
-│   │   └── authorize.js          # RBAC & fine-grained permission middleware
-│   ├── routes/
-│   │   ├── auth.routes.js        # Authentication & logout endpoints
-│   │   ├── inventory.routes.js   # Inventory CRUD & searching endpoints
-│   │   ├── users.routes.js       # User & permission management endpoints
-│   │   └── audit.routes.js       # Read-only audit trail endpoints
-│   ├── services/
-│   │   ├── inventory.service.js  # In-memory array sync & business logic
-│   │   ├── permissions.service.js# RBAC resolution & permission grants
-│   │   └── audit.service.js      # Audit logging service
-│   └── algorithms/
-│       ├── linearSearch.js       # Manual Linear Search implementation
-│       └── binarySearch.js       # Manual Binary Search implementation
-│
-├── tests/                        # Automated Test Suites
-│   ├── algorithms.test.js        # Search comparison & complexity tests
-│   ├── inventory.test.js         # Functional CRUD & persistence tests
-│   ├── rbac.test.js              # Security & authorization unit tests
-│   └── api.test.js               # End-to-end HTTP endpoint tests
-│
-├── scripts/
-│   ├── create-admin.js           # Secure CLI administrator provisioner
-│   └── seed.js                   # Demo database seeder
-│
-├── .env.example                  # Environment configuration template
-├── .gitignore                    # Version control exclusions
-├── package.json                  # Dependencies & npm scripts
-└── README.md                     # Documentation
+#### Method 1: Blueprint Deployment (Recommended)
+1. Push your repository to GitHub or GitLab.
+2. In the Render Dashboard, navigate to **Blueprints** &rarr; **New Blueprint Instance**.
+3. Select your repository. Render will automatically detect [`render.yaml`](./render.yaml).
+4. Review the detected configuration:
+   - **Disk**: 1 GB persistent disk mounted at `/var/data`
+   - **Build Command**: `npm install`
+   - **Start Command**: `npm start`
+5. Under environment variables, supply your secret administrator credentials:
+   - `ADMIN_USERNAME`: Your desired admin username (e.g. `saksham`)
+   - `ADMIN_PASSWORD`: A strong secret password
+   - `ADMIN_EMAIL`: Your administrative email address
+6. Click **Apply**. Render will build and deploy the web service with persistent storage.
+
+---
+
+#### Method 2: Manual Web Service Setup
+1. In Render Dashboard, click **New +** &rarr; **Web Service**.
+2. Connect your Git repository.
+3. Configure the service settings:
+   - **Name**: `stockpilot-inventory`
+   - **Region**: Select your preferred region (e.g., Frankfurt, Oregon, Singapore).
+   - **Branch**: `master` or `main`
+   - **Runtime**: `Node`
+   - **Build Command**: `npm install`
+   - **Start Command**: `npm start`
+   - **Plan**: `Starter` (or any tier supporting Persistent Disks)
+4. Attach a **Persistent Disk**:
+   - Scroll to **Disks** &rarr; **Add Disk**.
+   - **Name**: `stockpilot-data`
+   - **Mount Path**: `/var/data`
+   - **Size**: `1 GB` (or as required)
+5. Add the **Environment Variables** (see table below).
+6. Click **Create Web Service**.
+
+---
+
+### Production Environment Variables Reference
+
+| Variable | Required | Default | Description |
+| :--- | :---: | :--- | :--- |
+| `NODE_ENV` | **Yes** | `production` | Enables production optimizations, HTTPS cookie security, and proxy trusting. |
+| `PORT` | Auto | `3000` | Port assigned by Render's runtime router. |
+| `HOST` | No | `0.0.0.0` | Binding host address for containerized network traffic. |
+| `DATABASE_PATH` | **Yes** | `/var/data/stockpilot.sqlite` | Absolute file path on the persistent disk for SQLite storage. |
+| `SESSION_SECRET` | **Yes** | *(Auto-generated)* | 64+ character random string for signing HTTP session cookies. |
+| `SESSION_MAX_AGE_MS` | No | `86400000` (24h) | Session cookie lifetime in milliseconds. |
+| `ADMIN_USERNAME` | First Boot | `admin` | Bootstrap username created only if zero Super Administrators exist. |
+| `ADMIN_PASSWORD` | First Boot | *None (Required)* | Password for bootstrap admin. Never hardcoded or stored in Git. |
+| `ADMIN_EMAIL` | No | `admin@stockpilot.local`| Email address for bootstrap administrator. |
+| `ADMIN_FULL_NAME` | No | `System Administrator` | Full name for bootstrap administrator. |
+| `DEFAULT_LOW_STOCK_THRESHOLD` | No | `10` | Default inventory quantity threshold for low-stock warnings. |
+
+> [!IMPORTANT]
+> Never commit real passwords, secrets, or `.env` files into version control. Use Render's Environment Variables dashboard or secret manager for production credentials.
+
+---
+
+### Initial Administrator Provisioning
+
+StockPilot strictly prohibits unauthenticated or public administrator registration routes. The Super Administrator account can be created in two ways:
+
+1. **Automatic First-Boot Bootstrap (Environment Variables)**:
+   If the database has zero existing Super Administrators, StockPilot inspects `ADMIN_USERNAME` and `ADMIN_PASSWORD`. If provided, it securely bcrypt-hashes the password and provisions the initial account with full permissions.
+2. **Render Web Shell CLI (Post-Deploy)**:
+   Open the **Shell** tab in your Render Web Service dashboard and execute:
+   ```bash
+   node scripts/create-admin.js <username> <email> <password> "<Full Name>"
+   ```
+   *Example:*
+   ```bash
+   node scripts/create-admin.js saksham saksham@stockpilot.local "@MySuperSecret123" "Saksham"
+   ```
+
+#### Teammate User Registration & RBAC Assignment
+* Teammates register their own accounts via the clean sign-up portal at `/register.html` (Name, Username, Email, Password).
+* For security, all self-registered users default strictly to the restricted `viewer` role.
+* The Super Administrator logs in and promotes teammates to `inventory_manager` or assigns individual custom permissions from the **User Management** screen (`/users.html`).
+
+---
+
+### Database Persistence & Backup Procedures
+
+#### How Persistence Works
+Render persistent disks are non-volatile network-attached storage. Data stored in `/var/data` persists through:
+* Application restarts and uncaught exception recoveries.
+* Git code pushes, automated builds, and service redeployments.
+* Service plan upgrades or server maintenance reboots.
+
+#### Backup Procedures
+
+##### 1. Full Database Hot Backup (Render Shell)
+SQLite supports non-blocking hot backups without shutting down the service. Run this command in Render Shell:
+```bash
+sqlite3 /var/data/stockpilot.sqlite ".backup '/var/data/stockpilot_backup_$(date +%Y%m%d_%H%M%S).sqlite'"
 ```
 
+##### 2. JSON State Export (Cross-Version Portability)
+To create a portable, human-readable snapshot of all roles, permissions, user records, products, and system settings:
+```bash
+node scripts/export-database.js
+```
+This generates `scripts/database-snapshot.json` containing table data without exposing raw passwords (only bcrypt hashes).
+
+##### 3. Downloading Backup Archives to Local Machine
+StockPilot includes an authenticated download endpoint accessible to Super Administrators:
+* Endpoint: `GET /download`
+* Returns the complete codebase and current state as a ZIP package.
+
+##### 4. Restoring From a Backup
+If you need to restore your database on Render:
+1. In the Render Shell, verify your backup file exists:
+   ```bash
+   ls -la /var/data/
+   ```
+2. Restore the database:
+   ```bash
+   cp /var/data/stockpilot_backup_YYYYMMDD.sqlite /var/data/stockpilot.sqlite
+   ```
+3. Restart the web service from the Render dashboard.
+
 ---
 
-## Installation & Setup Instructions
+## Local Development & Setup
 
 ### Prerequisites
-- [Node.js](https://nodejs.org/) version 18, 20, 22, or 24 installed.
-- Modern web browser (Chrome, Edge, Firefox, or Safari).
+* Node.js v22.0.0 or higher
+* npm v10 or higher
 
-### 1. Clone or Open Project in VS Code
-Open a Windows PowerShell terminal or VS Code integrated terminal and navigate to the project directory:
-
+### Installation
 ```powershell
-cd c:\Users\saksh\OneDrive\Desktop\project\stockpilot
-```
+# Clone the repository
+git clone <repo-url>
+cd stockpilot
 
-### 2. Install Dependencies
-Run the npm install command using `npm.cmd` (or `npm` on Unix/macOS):
-
-```powershell
+# Install runtime dependencies
 npm.cmd install
+
+# Copy environment template
+copy .env.example .env
 ```
 
-### 3. Environment Configuration
-Copy the `.env.example` file to create your local `.env`:
-
+### Running the Application Locally
 ```powershell
-Copy-Item .env.example .env
-```
-
-Configuration variables available in `.env`:
-```ini
-PORT=3000
-NODE_ENV=development
-SESSION_SECRET=stockpilot_local_secure_session_secret_key_8923472
-SESSION_MAX_AGE_MS=86400000
-ADMIN_USERNAME=admin
-ADMIN_EMAIL=admin@stockpilot.local
-ADMIN_PASSWORD=Admin@12345
-ADMIN_FULL_NAME="System Administrator"
-DEFAULT_LOW_STOCK_THRESHOLD=10
-```
-
-### 4. Initialize Database & Seed Demo Data
-Run the automated seed script to populate SQLite with roles, permissions, demo users, sample inventory SKUs, and audit history:
-
-```powershell
-npm.cmd run seed
-```
-
-Output:
-```text
---- Seeding StockPilot Database ---
-Seeding completed successfully!
-Demo Accounts Created:
-  1. Super Admin:       admin    / Admin@12345   (Full access)
-  2. Inventory Manager: manager  / Manager@12345 (Create, Edit, Adjust Stock)
-  3. Viewer:            viewer   / Viewer@12345  (Read-only view & search)
-  4. Custom User:       auditor  / Auditor@12345 (Audit view & inventory view)
-Products in Inventory Array: 15
-```
-
-Alternatively, you can manually create an initial administrator account using the secure CLI script:
-```powershell
-node scripts/create-admin.js admin admin@stockpilot.local Admin@12345 "System Administrator"
-```
-
----
-
-## Running the Application
-
-### Start the Server
-Start the StockPilot application server:
-
-```powershell
+# Start production server
 npm.cmd start
-```
 
-For development mode with automatic reload on file changes:
-```powershell
+# Or start in watch development mode
 npm.cmd run dev
 ```
 
-The server will output:
+Server output:
 ```text
 =======================================================
  StockPilot - Inventory Management System Running
- URL: http://localhost:3000
- Mode: development
+ Listening on: http://0.0.0.0:3000
+ Environment: development
 =======================================================
 ```
 
-Open your browser and navigate to:
-**[http://localhost:3000](http://localhost:3000)**
+Access the application in your browser:
+* **Login**: [http://localhost:3000/login.html](http://localhost:3000/login.html)
+* **Register**: [http://localhost:3000/register.html](http://localhost:3000/register.html)
+* **Dashboard**: [http://localhost:3000/dashboard.html](http://localhost:3000/dashboard.html)
 
 ---
 
-## Default User Accounts for Testing
+## Automated Test Suite
 
-| Username | Password | Role | Permissions |
-| :--- | :--- | :--- | :--- |
-| **`admin`** | `Admin@12345` | Super Admin | **Full Access** (All 13 permissions: Products CRUD, User CRUD, Permissions, Audit, Settings) |
-| **`manager`** | `Manager@12345` | Inventory Manager | `inventory.view`, `inventory.search`, `inventory.create`, `inventory.update`, `inventory.adjust_stock` |
-| **`viewer`** | `Viewer@12345` | Viewer | `inventory.view`, `inventory.search` (Read-only catalog & search) |
-| **`auditor`** | `Auditor@12345` | Custom User | `inventory.view`, `inventory.search`, `audit.view` (Audit inspection) |
-
-> **Tip**: On the login page (`/login.html`), click any of the **1-Click Demo Role** buttons to instantly populate the credentials.
-
----
-
-## How to Test System Features
-
-### 1. Searching Algorithms Demonstration
-1. Log in with any account (e.g., `viewer` or `admin`).
-2. Navigate to **Search Algorithms** (`/search.html`).
-3. Select **Dual Comparison Mode**.
-4. Enter or click a sample Product ID:
-   - Click **ID: 101**: First element in the array. Linear Search finishes in 1 comparison \(O(1)\).
-   - Click **ID: 108**: Middle element. Notice how Binary Search cuts the interval in half.
-   - Click **ID: 115**: Last element. Observe how Linear Search checks all 15 elements (\(O(n)\)) while Binary Search finds it in only ~4 comparisons (\(O(\log n)\)).
-   - Click **ID: 999**: Non-existent item. Observe the "No product found with the provided Product ID" message and comparisons count.
-
-### 2. RBAC Enforcement Demonstration
-1. **As Viewer (`viewer`)**:
-   - Go to **Inventory Catalog** (`/inventory.html`).
-   - Notice the "Add New Product" button is hidden.
-   - The "Edit", "Stock", and "Delete" buttons on table rows are disabled with tooltips.
-   - If you send a direct POST request via developer tools or Postman to `/api/inventory`, the server responds with:
-     ```json
-     {
-       "error": "Forbidden: You lack the required permission (inventory.create) to perform this action.",
-       "code": "PERMISSION_DENIED",
-       "requiredPermission": "inventory.create"
-     }
-     ```
-2. **As Manager (`manager`)**:
-   - Log out and log in as `manager`.
-   - Go to `/inventory.html`.
-   - You can click **Add New Product** and edit existing products.
-   - Notice that the **Delete** button is disabled (`inventory.delete` permission required).
-   - Attempting to delete a product via direct API request returns HTTP `403 Forbidden`.
-3. **As Super Admin (`admin`)**:
-   - Full permissions. You can create, edit, adjust stock, and delete products.
-   - Access **User Management** (`/users.html`) to create users or toggle active status.
-   - Access **Access Permissions** (`/permissions.html`) to grant or revoke specific permissions for users.
-   - Access **Audit History** (`/audit.html`) to review the immutable event log.
-
----
-
-## Running Automated Tests
-
-StockPilot includes 28 automated test cases covering functional requirements, security constraints, searching algorithms, and HTTP API integration.
-
-To run all test suites:
+StockPilot includes a complete test harness containing 29 automated tests verifying searching algorithms, backend RBAC enforcement, HTTP API contracts, inventory state machines, and restart persistence.
 
 ```powershell
 npm.cmd test
 ```
 
-### Test Coverage Overview:
-- **`tests/algorithms.test.js`**:
-  - Linear Search: best case \(O(1)\), middle case, missing item, empty array.
-  - Binary Search: sorted copy requirement, logarithmic comparisons (\(O(\log n)\)), missing item, empty array.
-- **`tests/inventory.test.js`**:
-  - Product creation with unique ID validation.
-  - Duplicate product ID rejection.
-  - Negative quantity and negative price validation.
-  - Product updates and stock adjustments.
-  - Prevention of negative stock quantities.
-  - Product deletion and array synchronization.
-  - Persistence across server restarts.
-- **`tests/rbac.test.js`**:
-  - Bcrypt password hashing verification.
-  - Super Admin unrestricted permission inheritance.
-  - Manager role permissions isolation.
-  - Viewer role read-only restriction.
-  - Self-escalation prevention.
-  - Immediate effect of granted/revoked permissions.
-  - Deactivation permission revocation.
-  - Audit logging of unauthorized access attempts.
-- **`tests/api.test.js`**:
-  - HTTP 401 Unauthorized for unauthenticated requests.
-  - HTTP 403 Forbidden when Viewer attempts POST /api/inventory.
-  - HTTP 403 Forbidden when Manager attempts DELETE /api/inventory.
-  - HTTP 200 OK when Super Admin deletes product.
+### Test Suite Structure
+1. **`tests/algorithms.test.js`** (8 tests):
+   - Linear Search: $O(1)$ best case, middle element comparison counting, missing ID full-scan, empty array edge cases.
+   - Binary Search: ordered array requirement, $O(\log n)$ logarithmic comparison intervals, non-existent key, empty collection.
+2. **`tests/inventory.test.js`** (7 tests):
+   - Unique product ID verification and duplicate rejection.
+   - Negative quantity and negative price validation.
+   - Real-time synchronization between persistent SQLite storage and in-memory JavaScript array.
+   - Prevent stock quantity from dropping below zero.
+   - Product deletion and array synchronization.
+3. **`tests/rbac.test.js`** (8 tests):
+   - Bcrypt salt and hash verification (no plaintext passwords).
+   - Super Administrator all-permission resolution (13 permissions).
+   - Inventory Manager role restriction (CRUD without delete).
+   - Viewer role read-only restriction (view and search only).
+   - Prevention of self-escalation and self-permission modification.
+   - Immediate cache invalidation on permission grant/revoke.
+   - Account deactivation immediate permission revocation.
+   - Security audit logging of unauthorized attempts (`DENIED`).
+4. **`tests/api.test.js`** (5 tests):
+   - HTTP 401 Unauthorized for missing session cookies.
+   - HTTP 401 Unauthorized for direct unauthorized POST requests.
+   - HTTP 403 Forbidden for Viewer role attempting product creation or deletion.
+   - HTTP 403 Forbidden for Inventory Manager attempting product deletion.
+   - HTTP 200 OK for Super Administrator performing deletion and audit inspection.
+5. **`tests/persistence.test.js`** (1 test):
+   - Multi-phase persistence test proving product data survives simulated application restarts, database reconnections, and subsequent stock adjustments on persistent storage.
 
 ---
 
-## Security Design & Architectural Integrity
+## Security Architecture & Design Highlights
 
-1. **Defense in Depth**: Frontend UI controls (hiding/disabling buttons) are purely for user experience. True enforcement happens at the route middleware layer via `authenticate` and `authorize(permission)`.
-2. **Brute-Force Attack Mitigation**: The login route tracks failed login attempts per username/IP. Exceeding 5 failed attempts locks the account temporarily for 15 minutes with HTTP `429 Too Many Requests`.
-3. **Session Fixation Prevention**: `req.session.regenerate()` is executed upon successful authentication to issue a new session identifier.
-4. **Credential Confidentiality**: Password hashes, session secrets, and salt parameters are strictly excluded from all API responses and audit logs.
-5. **SQL Injection Prevention**: All SQLite queries are executed using parameterized prepared statements (`db.prepare('... WHERE col = ?')`).
-6. **Integrity Safeguards**: The system prevents the last active Super Administrator from being deactivated or demoted to prevent administrative lockouts.
+1. **Backend Authorization Enforcement**:
+   UI button hiding is strictly an ergonomic feature. Every backend route is wrapped in `authenticate` and `authorize(permission)` middleware. Unauthorized API calls return HTTP `403 Forbidden` and trigger automated audit log entries.
+2. **Secure HTTPS Session Handling**:
+   Configured with `app.set('trust proxy', 1)` and `proxy: true` in `express-session`. In production (`NODE_ENV=production`), session cookies enforce `httpOnly: true`, `secure: true`, and `sameSite: 'lax'`.
+3. **Brute-Force Rate Limiting**:
+   The `/api/auth/login` endpoint tracks consecutive failures. After 5 failed attempts, the IP/username pair is locked out for 15 minutes with HTTP `429 Too Many Requests`.
+4. **Session Fixation Prevention**:
+   `req.session.regenerate()` is called upon every successful authentication, preventing session hijacking attacks.
+5. **Parameterized Prepared Statements**:
+   Every SQL interaction uses compiled prepared statements (`db.prepare(...)`), preventing SQL injection attacks.
+6. **Immutable Audit Logging**:
+   All user authentications, stock modifications, product deletions, and permission modifications write immutable records to `audit_logs` with acting user ID, client IP, timestamp, and outcome.
 
 ---
 
 ## License
 
-This project is developed for educational and professional demonstration purposes. All rights reserved.
+StockPilot is developed for professional demonstration and educational purposes. All rights reserved.

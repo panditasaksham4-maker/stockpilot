@@ -1,4 +1,10 @@
-const { test, describe } = require('node:test');
+const path = require('path');
+const fs = require('fs');
+
+const testDbPath = path.resolve(__dirname, 'test_rbac.sqlite');
+process.env.DATABASE_PATH = testDbPath;
+
+const { test, describe, before, after } = require('node:test');
 const assert = require('node:assert/strict');
 const bcrypt = require('bcryptjs');
 const db = require('../src/database/db');
@@ -6,6 +12,31 @@ const permissionsService = require('../src/services/permissions.service');
 const auditService = require('../src/services/audit.service');
 
 describe('Security & RBAC Authorization Test Suite', () => {
+  before(() => {
+    // Seed test users in test database
+    const salt = bcrypt.genSaltSync(10);
+    const now = new Date().toISOString();
+    const insert = db.prepare(`
+      INSERT OR IGNORE INTO users (username, full_name, email, password_hash, role_id, is_active, created_at, updated_at)
+      VALUES (?, ?, ?, ?, ?, 1, ?, ?)
+    `);
+    insert.run('admin', 'Admin User', 'admin@test.local', bcrypt.hashSync('Admin@12345', salt), 'super_admin', now, now);
+    insert.run('manager', 'Manager User', 'manager@test.local', bcrypt.hashSync('Manager@12345', salt), 'inventory_manager', now, now);
+    insert.run('viewer', 'Viewer User', 'viewer@test.local', bcrypt.hashSync('Viewer@12345', salt), 'viewer', now, now);
+    insert.run('auditor', 'Auditor User', 'auditor@test.local', bcrypt.hashSync('Auditor@12345', salt), 'custom', now, now);
+  });
+
+  after(() => {
+    try {
+      db.close();
+      if (fs.existsSync(testDbPath)) fs.unlinkSync(testDbPath);
+      const wal = `${testDbPath}-wal`;
+      const shm = `${testDbPath}-shm`;
+      if (fs.existsSync(wal)) fs.unlinkSync(wal);
+      if (fs.existsSync(shm)) fs.unlinkSync(shm);
+    } catch {}
+  });
+
   test('Security: User passwords in SQLite are securely hashed with bcrypt', () => {
     const adminUser = db.prepare("SELECT password_hash FROM users WHERE username = 'admin'").get();
     assert.ok(adminUser, 'Admin user must exist');

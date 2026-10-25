@@ -1,7 +1,33 @@
+# Dependencies
 node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Environment and local secret files
+.env
+.env.*
+*.env
+*.local
+
+# SQLite Database Storage and temporary journals
 data/
 *.db
 *.db-journal
-.env
+*.db-wal
+*.db-shm
+*.sqlite
+*.sqlite3
+*.bak
+
+# Application Logs
+logs/
+*.log
+
+# Executables, tunnels, and OS metadata
+cloudflared
+cloudflared.exe
 .DS_Store
-npm-debug.log*
+Thumbs.db
+.vscode/
+.idea/

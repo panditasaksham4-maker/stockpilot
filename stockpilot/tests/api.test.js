@@ -1,3 +1,9 @@
+const path = require('path');
+const fs = require('fs');
+
+const testDbPath = path.resolve(__dirname, 'test_api.sqlite');
+process.env.DATABASE_PATH = testDbPath;
+
 const { test, describe, before, after } = require('node:test');
 const assert = require('node:assert/strict');
 const http = require('http');
@@ -8,8 +14,32 @@ describe('HTTP API Endpoints & RBAC Integration Test Suite', () => {
   let baseUrl;
 
   before((_, done) => {
+    const db = require('../src/database/db');
+    const bcrypt = require('bcryptjs');
+    const salt = bcrypt.genSaltSync(10);
+    const now = new Date().toISOString();
+
+    const insert = db.prepare(`
+      INSERT OR IGNORE INTO users (username, full_name, email, password_hash, role_id, is_active, created_at, updated_at)
+      VALUES (?, ?, ?, ?, ?, 1, ?, ?)
+    `);
+    insert.run('admin', 'Admin User', 'admin@test.local', bcrypt.hashSync('Admin@12345', salt), 'super_admin', now, now);
+    insert.run('manager', 'Manager User', 'manager@test.local', bcrypt.hashSync('Manager@12345', salt), 'inventory_manager', now, now);
+    insert.run('viewer', 'Viewer User', 'viewer@test.local', bcrypt.hashSync('Viewer@12345', salt), 'viewer', now, now);
+
+    // Ensure sample product 101 exists for testing search
+    const inventoryService = require('../src/services/inventory.service');
+    const existing101 = db.prepare('SELECT product_id FROM products WHERE product_id = 101').get();
+    if (!existing101) {
+      db.prepare(`
+        INSERT INTO products (product_id, name, category, quantity, price, description, created_at, updated_at)
+        VALUES (101, 'Precision Caliper Gauge', 'Hardware', 145, 89.99, 'Test Caliper', ?, ?)
+      `).run(now, now);
+      inventoryService.refreshMemoryArray();
+    }
+
     server = http.createServer(app);
-    server.listen(0, () => {
+    server.listen(0, '127.0.0.1', () => {
       const port = server.address().port;
       baseUrl = `http://127.0.0.1:${port}`;
       done();
@@ -18,7 +48,18 @@ describe('HTTP API Endpoints & RBAC Integration Test Suite', () => {
 
   after((_, done) => {
     if (server) {
-      server.close(done);
+      server.close(() => {
+        try {
+          const db = require('../src/database/db');
+          db.close();
+          if (fs.existsSync(testDbPath)) fs.unlinkSync(testDbPath);
+          const wal = `${testDbPath}-wal`;
+          const shm = `${testDbPath}-shm`;
+          if (fs.existsSync(wal)) fs.unlinkSync(wal);
+          if (fs.existsSync(shm)) fs.unlinkSync(shm);
+        } catch {}
+        done();
+      });
     } else {
       done();
     }

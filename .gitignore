@@ -24,6 +24,14 @@ venv/
 # Temporary SQLite and test databases
 test_run.db
 test_self_healing.db
+*.sqlite
+*.sqlite3
+*.db
+*.db-wal
+*.db-shm
+*.bak
+cloudflared.exe
+cloudflared
 
 # OS / Editor temporary files
 .DS_Store

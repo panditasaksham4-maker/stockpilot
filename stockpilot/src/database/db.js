@@ -1,12 +1,32 @@
 const path = require('path');
 const fs = require('fs');
 
-const DB_DIR = path.join(__dirname, '../../data');
-if (!fs.existsSync(DB_DIR)) {
-  fs.mkdirSync(DB_DIR, { recursive: true });
+const DEFAULT_LOCAL_PATH = path.join(__dirname, '../../data/stockpilot.db');
+const DEFAULT_PROD_PATH = '/var/data/stockpilot.sqlite';
+
+function resolveDatabasePath() {
+  if (process.env.DATABASE_PATH && process.env.DATABASE_PATH.trim() !== '') {
+    return path.resolve(process.env.DATABASE_PATH.trim());
+  }
+  if (process.env.DB_PATH && process.env.DB_PATH.trim() !== '') {
+    return path.resolve(process.env.DB_PATH.trim());
+  }
+  if (process.env.NODE_ENV === 'production' && process.platform !== 'win32') {
+    return DEFAULT_PROD_PATH;
+  }
+  return DEFAULT_LOCAL_PATH;
 }
 
-const DB_PATH = process.env.DB_PATH || path.join(DB_DIR, 'stockpilot.db');
+const DB_PATH = resolveDatabasePath();
+
+const dbDir = path.dirname(DB_PATH);
+if (!fs.existsSync(dbDir)) {
+  try {
+    fs.mkdirSync(dbDir, { recursive: true });
+  } catch (err) {
+    console.warn(`[StockPilot Database] Could not create directory ${dbDir}: ${err.message}`);
+  }
+}
 
 class SqliteDatabase {
   constructor(filePath) {

@@ -5,15 +5,16 @@ const auditService = require('../src/services/audit.service');
 
 const args = process.argv.slice(2);
 
-const username = args[0] || process.env.ADMIN_USERNAME || 'admin';
-const email = args[1] || process.env.ADMIN_EMAIL || 'admin@stockpilot.local';
-const password = args[2] || process.env.ADMIN_PASSWORD || 'Admin@12345';
+const username = args[0] || process.env.ADMIN_USERNAME;
+const email = args[1] || process.env.ADMIN_EMAIL || (username ? `${username}@stockpilot.local` : null);
+const password = args[2] || process.env.ADMIN_PASSWORD;
 const fullName = args[3] || process.env.ADMIN_FULL_NAME || 'System Administrator';
 
 console.log('--- StockPilot Admin Account Setup ---');
 
 if (!username || !email || !password) {
   console.error('Usage: node scripts/create-admin.js <username> <email> <password> [fullName]');
+  console.error('Alternatively, set ADMIN_USERNAME and ADMIN_PASSWORD environment variables.');
   process.exit(1);
 }
 

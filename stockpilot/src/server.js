@@ -15,6 +15,11 @@ const auditRoutes = require('./routes/audit.routes');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
+const HOST = process.env.HOST || '0.0.0.0';
+const isProduction = process.env.NODE_ENV === 'production';
+
+// Trust Render's reverse proxy for secure HTTPS cookies and remote IP detection
+app.set('trust proxy', 1);
 
 // Security & Parsing Middlewares
 app.use(cors({
@@ -24,15 +29,21 @@ app.use(cors({
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// Session Configuration
+// Warn if SESSION_SECRET is not configured in production
+if (isProduction && !process.env.SESSION_SECRET) {
+  console.warn('[SECURITY WARNING] SESSION_SECRET is not set in production! Please define SESSION_SECRET in your environment variables.');
+}
+
+// Secure Production Session Configuration
 app.use(session({
   name: 'stockpilot.sid',
   secret: process.env.SESSION_SECRET || 'stockpilot_secure_fallback_session_key_2026',
   resave: false,
   saveUninitialized: false,
+  proxy: true,
   cookie: {
     httpOnly: true,
-    secure: process.env.NODE_ENV === 'production',
+    secure: isProduction,
     sameSite: 'lax',
     maxAge: parseInt(process.env.SESSION_MAX_AGE_MS, 10) || (24 * 60 * 60 * 1000) // 24 hours
   }
@@ -84,37 +95,42 @@ app.use((err, req, res, next) => {
   });
 });
 
-// Automatic Initial Admin Check on startup
+// Idempotent Super Administrator Provisioning (Optional bootstrap from environment)
 function ensureDefaultAdmin() {
   const adminCount = db.prepare("SELECT COUNT(*) as count FROM users WHERE role_id = 'super_admin'").get().count;
   if (adminCount === 0) {
-    const bcrypt = require('bcryptjs');
-    const adminUsername = process.env.ADMIN_USERNAME || 'admin';
-    const adminEmail = process.env.ADMIN_EMAIL || 'admin@stockpilot.local';
-    const adminPassword = process.env.ADMIN_PASSWORD || 'Admin@12345';
-    const adminFullName = process.env.ADMIN_FULL_NAME || 'System Administrator';
+    const adminUsername = process.env.ADMIN_USERNAME;
+    const adminPassword = process.env.ADMIN_PASSWORD;
 
-    const salt = bcrypt.genSaltSync(10);
-    const hash = bcrypt.hashSync(adminPassword, salt);
-    const now = new Date().toISOString();
+    if (adminUsername && adminPassword) {
+      const bcrypt = require('bcryptjs');
+      const adminEmail = process.env.ADMIN_EMAIL || `${adminUsername}@stockpilot.local`;
+      const adminFullName = process.env.ADMIN_FULL_NAME || 'System Administrator';
 
-    db.prepare(`
-      INSERT INTO users (username, full_name, email, password_hash, role_id, is_active, created_at, updated_at)
-      VALUES (?, ?, ?, ?, 'super_admin', 1, ?, ?)
-    `).run(adminUsername, adminFullName, adminEmail, hash, now, now);
+      const salt = bcrypt.genSaltSync(10);
+      const hash = bcrypt.hashSync(adminPassword, salt);
+      const now = new Date().toISOString();
 
-    console.log(`[StockPilot] Initial Super Administrator account created: username='${adminUsername}'`);
+      db.prepare(`
+        INSERT INTO users (username, full_name, email, password_hash, role_id, is_active, created_at, updated_at)
+        VALUES (?, ?, ?, ?, 'super_admin', 1, ?, ?)
+      `).run(adminUsername.trim(), adminFullName.trim(), adminEmail.trim(), hash, now, now);
+
+      console.log(`[StockPilot] Initial Super Administrator account provisioned from environment variables: username='${adminUsername.trim()}'`);
+    } else {
+      console.log(`[StockPilot] Notice: No Super Administrator account exists yet. Set ADMIN_USERNAME and ADMIN_PASSWORD in environment variables, or run 'npm run create-admin' to initialize.`);
+    }
   }
 }
 
 ensureDefaultAdmin();
 
 if (require.main === module) {
-  app.listen(PORT, () => {
+  app.listen(PORT, HOST, () => {
     console.log(`=======================================================`);
     console.log(` StockPilot - Inventory Management System Running`);
-    console.log(` URL: http://localhost:${PORT}`);
-    console.log(` Mode: ${process.env.NODE_ENV || 'development'}`);
+    console.log(` Listening on: http://${HOST}:${PORT}`);
+    console.log(` Environment: ${process.env.NODE_ENV || 'development'}`);
     console.log(`=======================================================`);
   });
 }
