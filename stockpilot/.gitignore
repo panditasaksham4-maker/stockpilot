@@ -9,6 +9,7 @@ yarn-error.log*
 .env.*
 *.env
 *.local
+!.env.example
 
 # SQLite Database Storage and temporary journals
 data/
