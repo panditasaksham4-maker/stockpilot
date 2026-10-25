@@ -1,0 +1,12 @@
+{
+  "name": "stockpilot-root",
+  "version": "1.0.0",
+  "description": "StockPilot Root Deployment Helper",
+  "scripts": {
+    "start": "npm start --prefix stockpilot",
+    "build": "npm install --prefix stockpilot"
+  },
+  "engines": {
+    "node": ">=22.0.0"
+  }
+}

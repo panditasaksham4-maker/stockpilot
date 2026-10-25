@@ -12,19 +12,27 @@ function resolveDatabasePath() {
     return path.resolve(process.env.DB_PATH.trim());
   }
   if (process.env.NODE_ENV === 'production' && process.platform !== 'win32') {
-    return DEFAULT_PROD_PATH;
+    // If Render persistent disk /var/data is attached and exists, use it
+    if (fs.existsSync('/var/data')) {
+      return DEFAULT_PROD_PATH;
+    }
   }
   return DEFAULT_LOCAL_PATH;
 }
 
-const DB_PATH = resolveDatabasePath();
+let DB_PATH = resolveDatabasePath();
 
-const dbDir = path.dirname(DB_PATH);
+let dbDir = path.dirname(DB_PATH);
 if (!fs.existsSync(dbDir)) {
   try {
     fs.mkdirSync(dbDir, { recursive: true });
   } catch (err) {
-    console.warn(`[StockPilot Database] Could not create directory ${dbDir}: ${err.message}`);
+    console.warn(`[StockPilot Database] Could not create directory ${dbDir} (${err.message}). Falling back to local storage.`);
+    DB_PATH = DEFAULT_LOCAL_PATH;
+    dbDir = path.dirname(DB_PATH);
+    if (!fs.existsSync(dbDir)) {
+      try { fs.mkdirSync(dbDir, { recursive: true }); } catch {}
+    }
   }
 }
 
