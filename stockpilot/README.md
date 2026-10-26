@@ -102,11 +102,14 @@ StockPilot strictly prohibits unauthenticated or public administrator registrati
 
 ### Database Persistence & Backup Procedures
 
-#### How Persistence Works
-Render persistent disks are non-volatile network-attached storage. Data stored in `/var/data` persists through:
-* Application restarts and uncaught exception recoveries.
-* Git code pushes, automated builds, and service redeployments.
-* Service plan upgrades or server maintenance reboots.
+#### How Persistence Works & Hosting Storage Requirements
+> [!WARNING]
+> **Ephemeral Container Storage Warning**: On cloud platforms like Render, Railway, Fly.io, or Heroku, standard container filesystems are strictly ephemeral. Any time the service restarts, redeploys, or idles out (on free tiers after 15 minutes of inactivity), the entire container filesystem is wiped and recreated from the Git repository.
+
+To ensure your SQLite database, product records, user accounts, and audit logs persist permanently across restarts and redeployments, the following storage architecture is implemented:
+1. **Render Persistent Disk**: Render mounts a non-volatile SSD volume at `/var/data`. The application checks `process.env.DATABASE_PATH` (defaulting to `/var/data/stockpilot.sqlite` on production Linux). All database tables and indexes reside on this disk.
+2. **Immediate WAL Checkpointing**: SQLite runs with `journal_mode = WAL`. To ensure that product creations, updates, stock increments/decrements, and deletions are immediately committed to disk rather than lingering in write buffers, StockPilot invokes `db.checkpoint()` after every inventory mutation and registers clean `SIGINT` / `SIGTERM` process shutdown handlers.
+3. **Idempotent Initialization**: On startup, schema migrations execute `CREATE TABLE IF NOT EXISTS` and `INSERT OR IGNORE`. Existing tables and existing product catalogs are never dropped, reset, or overwritten on boot.
 
 #### Backup Procedures
 
@@ -188,7 +191,7 @@ Access the application in your browser:
 
 ## Automated Test Suite
 
-StockPilot includes a complete test harness containing 29 automated tests verifying searching algorithms, backend RBAC enforcement, HTTP API contracts, inventory state machines, and restart persistence.
+StockPilot includes a complete test harness containing 31 automated tests across 6 test suites verifying searching algorithms, backend RBAC enforcement, HTTP API contracts, inventory state machines, disk persistence, and live server restart survivability.
 
 ```powershell
 npm.cmd test
@@ -221,6 +224,9 @@ npm.cmd test
    - HTTP 200 OK for Super Administrator performing deletion and audit inspection.
 5. **`tests/persistence.test.js`** (1 test):
    - Multi-phase persistence test proving product data survives simulated application restarts, database reconnections, and subsequent stock adjustments on persistent storage.
+6. **`tests/server_restart_persistence.test.js`** (2 tests):
+   - Integration test creating a product via authenticated API, tearing down the Node.js HTTP server, booting a fresh server instance, reloading the website/API, and asserting that the product, its quantity, and price survive intact.
+   - Verification of stock adjustment, Linear/Binary searching, backend permission enforcement (rejecting unauthorized viewer mutations), and product deletion persistence across reboots.
 
 ---
 

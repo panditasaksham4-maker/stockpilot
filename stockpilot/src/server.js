@@ -126,13 +126,31 @@ function ensureDefaultAdmin() {
 ensureDefaultAdmin();
 
 if (require.main === module) {
-  app.listen(PORT, HOST, () => {
+  const server = app.listen(PORT, HOST, () => {
     console.log(`=======================================================`);
     console.log(` StockPilot - Inventory Management System Running`);
     console.log(` Listening on: http://${HOST}:${PORT}`);
     console.log(` Environment: ${process.env.NODE_ENV || 'development'}`);
     console.log(`=======================================================`);
   });
+
+  const gracefulShutdown = (signal) => {
+    console.log(`\n[StockPilot] Received ${signal}. Flushing database changes and shutting down gracefully...`);
+    if (typeof db.checkpoint === 'function') {
+      try {
+        db.checkpoint();
+      } catch (err) {
+        console.error('[StockPilot] Error checkpointing database on shutdown:', err.message);
+      }
+    }
+    server.close(() => {
+      console.log('[StockPilot] HTTP server closed cleanly.');
+      process.exit(0);
+    });
+  };
+
+  process.on('SIGINT', () => gracefulShutdown('SIGINT'));
+  process.on('SIGTERM', () => gracefulShutdown('SIGTERM'));
 }
 
 module.exports = app;

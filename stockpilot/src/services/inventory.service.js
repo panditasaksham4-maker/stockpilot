@@ -252,6 +252,7 @@ class InventoryService {
     `);
 
     stmt.run(productId, data.name.trim(), data.category.trim(), quantity, price, description, now, now);
+    if (typeof db.checkpoint === 'function') db.checkpoint();
 
     // Synchronize in-memory array representation
     this.refreshMemoryArray();
@@ -317,6 +318,7 @@ class InventoryService {
     `);
 
     stmt.run(name, category, quantity, price, description, now, id);
+    if (typeof db.checkpoint === 'function') db.checkpoint();
 
     // Synchronize in-memory array representation
     this.refreshMemoryArray();
@@ -378,6 +380,7 @@ class InventoryService {
 
     const now = new Date().toISOString();
     db.prepare('UPDATE products SET quantity = ?, updated_at = ? WHERE product_id = ?').run(calculatedQuantity, now, id);
+    if (typeof db.checkpoint === 'function') db.checkpoint();
 
     this.refreshMemoryArray();
 
@@ -411,6 +414,7 @@ class InventoryService {
     }
 
     db.prepare('DELETE FROM products WHERE product_id = ?').run(id);
+    if (typeof db.checkpoint === 'function') db.checkpoint();
 
     this.refreshMemoryArray();
 

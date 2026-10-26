@@ -1,4 +1,10 @@
-const { test, describe } = require('node:test');
+const path = require('path');
+const fs = require('fs');
+
+const testDbPath = path.resolve(__dirname, 'test_inventory.sqlite');
+process.env.DATABASE_PATH = testDbPath;
+
+const { test, describe, after } = require('node:test');
 const assert = require('node:assert/strict');
 const inventoryService = require('../src/services/inventory.service');
 const db = require('../src/database/db');
@@ -125,5 +131,16 @@ describe('Inventory Functional & Persistence Test Suite', () => {
 
     // Clean up
     freshService.deleteProduct(persistSku, testUser);
+  });
+
+  after(() => {
+    try {
+      db.close();
+      if (fs.existsSync(testDbPath)) fs.unlinkSync(testDbPath);
+      const wal = `${testDbPath}-wal`;
+      const shm = `${testDbPath}-shm`;
+      if (fs.existsSync(wal)) fs.unlinkSync(wal);
+      if (fs.existsSync(shm)) fs.unlinkSync(shm);
+    } catch {}
   });
 });
